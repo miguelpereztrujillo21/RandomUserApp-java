@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RandomUserApp-java</string>
+    //MAIN
+    <string name="simple_search_by_email">Buscar por email</string>
+</resources>
