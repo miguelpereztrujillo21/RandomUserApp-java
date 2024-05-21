@@ -60,7 +60,7 @@ public class MainViewModel extends ViewModel {
         );
     }
 
-    public void loadnextPage() {
+    public void loadNextPage() {
         if (currentPage <= maxPages) {
             currentPage++;
             getUsersFromRepository();

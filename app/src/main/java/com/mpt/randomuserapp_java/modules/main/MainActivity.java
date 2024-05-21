@@ -2,18 +2,13 @@ package com.mpt.randomuserapp_java.modules.main;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpt.randomuserapp_java.adapters.UserAdapter;
 import com.mpt.randomuserapp_java.databinding.ActivityMainBinding;
-import com.mpt.randomuserapp_java.models.User;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -59,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     int totalItemCount = layoutManager.getItemCount();
                     int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
                     if (dy > 0 && totalItemCount >= lastVisible - 5) {
-                        viewModel.loadnextPage();
+                        viewModel.loadNextPage();
                     }
                 }
             }
