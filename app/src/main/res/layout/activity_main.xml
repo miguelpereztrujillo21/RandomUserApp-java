@@ -36,6 +36,10 @@
                 android:hint="@string/simple_search_by_email" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <include
+            android:id="@+id/layout_filters"
+            layout="@layout/filter_gender" />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_main"
             android:layout_width="match_parent"

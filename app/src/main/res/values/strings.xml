@@ -3,4 +3,7 @@
     //MAIN
     <string name="simple_search_by_email">Buscar por email</string>
     <string name="user_full_name">%s %s</string>
+    <string name="simple_male">Hombre</string>
+    <string name="simple_female">Mujer</string>
+
 </resources>

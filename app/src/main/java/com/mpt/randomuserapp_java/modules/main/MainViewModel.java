@@ -10,6 +10,7 @@ import com.mpt.randomuserapp_java.room.UserDao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,8 @@ public class MainViewModel extends ViewModel {
         return _filterEmail;
     }
 
+    private String filterGender = "";
+
     public void setFilterEmail(String filterEmail) {
         _filterEmail.postValue(filterEmail);
     }
@@ -51,7 +54,6 @@ public class MainViewModel extends ViewModel {
     }
 
     public void syncData(){
-        // Después de sincronizar los datos, obtén los usuarios de la base de datos
         compositeDisposable.add(
                 apiRepository.syncDataWithBackend()
                         .subscribeOn(Schedulers.io())
@@ -65,7 +67,7 @@ public class MainViewModel extends ViewModel {
     }
     public void getUsersFromRepository(){
         compositeDisposable.add(
-                apiRepository.getUsers(currentPage, itemsPerPage, "")
+                apiRepository.getUsers(currentPage, itemsPerPage, filterGender)
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 userResponse -> {
@@ -123,6 +125,20 @@ public class MainViewModel extends ViewModel {
         );
     }
 
+    public void getUsersByGender() {
+        currentPage = 1;
+        compositeDisposable.add(
+                userDao.getUsersByGender(filterGender)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                _users::postValue,
+                                throwable -> {
+                                    // Here you can handle the error
+                                }
+                        )
+        );
+    }
+
     public void loadNextPage() {
         int maxPages = 10;
         if (currentPage <= maxPages) {
@@ -134,6 +150,19 @@ public class MainViewModel extends ViewModel {
             }
         }
     }
+
+    public void onChipCheckedChanged(boolean isChecked, String filter) {
+        String newFilterValue = isChecked ? filter : "";
+        if(!Objects.equals(filterGender, newFilterValue)) {
+            filterGender = newFilterValue;
+            getUsersByGender();
+        }
+        if (newFilterValue.isEmpty()) {
+            _users.setValue(new ArrayList<>());
+            getUsersFromDatabase();
+        }
+    }
+
 
     @Override
     protected void onCleared() {

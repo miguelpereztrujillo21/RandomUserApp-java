@@ -31,4 +31,7 @@ public interface UserDao {
     @Query("SELECT * FROM user WHERE completeName LIKE :prefix || '%'")
     Single<List<User>> getUsersStartingWith(String prefix);
 
+    @Query("SELECT * FROM User WHERE gender = :gender")
+    Single<List<User>> getUsersByGender(String gender);
+
 }

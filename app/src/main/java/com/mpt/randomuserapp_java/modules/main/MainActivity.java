@@ -3,14 +3,18 @@ package com.mpt.randomuserapp_java.modules.main;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.CompoundButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
+import com.mpt.randomuserapp_java.R;
 import com.mpt.randomuserapp_java.adapters.UserAdapter;
 import com.mpt.randomuserapp_java.databinding.ActivityMainBinding;
+import com.mpt.randomuserapp_java.helpers.Constants;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -28,10 +32,15 @@ public class MainActivity extends AppCompatActivity {
        binding = ActivityMainBinding.inflate(getLayoutInflater());
        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
        setContentView(binding.getRoot());
-       setUpAdapter();
+         initComponents();
        initObservers();
        initListeners();
        viewModel.getUsersFromDatabase();
+    }
+
+    private void initComponents() {
+        setUpAdapter();
+        initChips();
     }
 
     private void initObservers() {
@@ -88,5 +97,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initChips() {
+        initChip(binding.layoutFilters.chipGenderMaleMain, Constants.SIMPLE_MALE);
+        initChip(binding.layoutFilters.chipGenderFemaleMain,Constants.SIMPLE_FEMALE);
+    }
+
+    private void initChip(Chip chip, String filter) {
+        chip.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.onChipCheckedChanged(isChecked, filter));
+
+    }
 
 }
