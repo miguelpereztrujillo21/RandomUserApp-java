@@ -1,5 +1,6 @@
 package com.mpt.randomuserapp_java.di;
 
+import com.mpt.randomuserapp_java.BuildConfig;
 import com.mpt.randomuserapp_java.network.ApiRepository;
 import com.mpt.randomuserapp_java.network.ApiRepositoryImpl;
 import com.mpt.randomuserapp_java.network.ApiService;
@@ -21,7 +22,7 @@ public class NetworkModule {
     @Singleton
     public ApiService provideApi() {
         return new Retrofit.Builder()
-                .baseUrl("BuildConfig.API_URL")
+                .baseUrl(BuildConfig.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService.class);

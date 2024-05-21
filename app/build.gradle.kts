@@ -19,6 +19,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {
@@ -27,6 +30,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isDebuggable = false
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "API_URL", "\"https://randomuser.me/\"")
+            buildConfigField("String", "MAPS_KEY", "\"${findProperty("MAPS_API_KEY")}\"")
+        }
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "API_URL", "\"https://randomuser.me/\"")
+            buildConfigField("String", "MAPS_KEY", "\"${findProperty("MAPS_API_KEY")}\"")
         }
     }
     compileOptions {
@@ -44,18 +62,16 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    //LiveData + ViewModel
-
-
     //Retrofit + Gson
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     //Dagger Hilt
     implementation(libs.dagger)
     annotationProcessor(libs.daggerCompiler)
-
-
-
+    //RxJava
+    implementation(libs.rxjava)
+    //Glide
+    implementation(libs.glide)
 }
 
 
