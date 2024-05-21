@@ -10,7 +10,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class ApiRepositoryImpl implements ApiRepository {
-    private ApiService api;
+    private final ApiService api;
 
     @Inject
     public ApiRepositoryImpl(ApiService api) {
@@ -19,7 +19,7 @@ public class ApiRepositoryImpl implements ApiRepository {
 
     @Override
     public UserResponse getUsers(Integer page, Integer results, String gender) {
-        Call<UserResponse> call = api.getUsers(page, results, gender);
+        Call<UserResponse> call = api.getUsers(page, results, gender,"97fd9fbb6274389e");
         UserResponse userResponse = null;
         try {
             Response<UserResponse> response = call.execute();

@@ -10,6 +10,7 @@ public interface ApiService {
     Call<UserResponse> getUsers(
             @Query("page") Integer page,
             @Query("results") Integer results,
-            @Query("gender") String gender
+            @Query("gender") String gender,
+            @Query("seed") String seed
     );
 }
