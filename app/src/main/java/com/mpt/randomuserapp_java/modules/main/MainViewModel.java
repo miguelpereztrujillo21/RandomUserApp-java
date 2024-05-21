@@ -24,7 +24,8 @@ public class MainViewModel extends ViewModel {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private int currentPage = 1;
-    private int maxPages = 10;
+
+    private boolean isLoading = false;
 
     @Inject
     public MainViewModel(ApiRepository apiRepository) {
@@ -42,6 +43,7 @@ public class MainViewModel extends ViewModel {
     }
 
     public void getUsersFromRepository(){
+        isLoading = true ;
         compositeDisposable.add(
                 apiRepository.getUsers(currentPage, 10, "male")
                         .subscribeOn(Schedulers.io())
@@ -58,14 +60,21 @@ public class MainViewModel extends ViewModel {
                                 }
                         )
         );
+        isLoading = false;
     }
 
     public void loadNextPage() {
+        int maxPages = 10;
         if (currentPage <= maxPages) {
             currentPage++;
             getUsersFromRepository();
         }
     }
+
+    public void  getUserfromDatabase(){
+
+    };
+
     @Override
     protected void onCleared() {
         super.onCleared();

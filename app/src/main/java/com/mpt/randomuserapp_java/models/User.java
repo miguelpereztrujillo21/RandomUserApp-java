@@ -1,7 +1,15 @@
 package com.mpt.randomuserapp_java.models;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Entity
 public class User {
     private String gender;
     private Name name;
@@ -12,6 +20,8 @@ public class User {
     private Registered registered;
     private String phone;
     private String cell;
+    @PrimaryKey
+    @NonNull
     private Id id;
     private ProfilePicture picture;
     private String nat;
