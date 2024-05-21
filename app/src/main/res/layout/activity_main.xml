@@ -33,8 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_search"
-                android:hint="@string/simple_search_by_email"
-                android:text="@{mainViewModel.filterEmail}" />
+                android:hint="@string/simple_search_by_email" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.recyclerview.widget.RecyclerView

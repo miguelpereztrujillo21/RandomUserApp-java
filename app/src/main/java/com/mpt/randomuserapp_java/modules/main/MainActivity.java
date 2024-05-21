@@ -1,6 +1,8 @@
 package com.mpt.randomuserapp_java.modules.main;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,12 +30,33 @@ public class MainActivity extends AppCompatActivity {
        setContentView(binding.getRoot());
        setUpAdapter();
        initObservers();
+       initListeners();
        viewModel.getUsersFromDatabase();
     }
 
     private void initObservers() {
-        viewModel.getUsers().observe(this, users -> {
-            adapter.submitList(users);
+        viewModel.getUsers().observe(this, users ->
+                adapter.submitList(users));
+
+        viewModel.getFilterEmail().observe(this, viewModel::getUsersStartingWith);
+    }
+
+    private void initListeners() {
+        binding.searchBarMain.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                viewModel.setFilterEmail(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+            }
         });
     }
 

@@ -27,4 +27,8 @@ public interface UserDao {
 
     @Delete
     void delete(User user);
+
+    @Query("SELECT * FROM user WHERE completeName LIKE :prefix || '%'")
+    Single<List<User>> getUsersStartingWith(String prefix);
+
 }

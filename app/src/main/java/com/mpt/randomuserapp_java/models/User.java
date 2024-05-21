@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 public class User {
     private String gender;
     private Name name;
+    private String completeName;
     private Location location;
     private String email;
     private Login login;
@@ -47,6 +48,14 @@ public class User {
 
     public Name getName() {
         return name;
+    }
+
+    public String getCompleteName() {
+        return completeName;
+    }
+
+    public void setCompleteName(String completeName) {
+        this.completeName = completeName;
     }
 
     public Location getLocation() {

@@ -1,7 +1,5 @@
 package com.mpt.randomuserapp_java.modules.main;
 
-import static android.nfc.tech.MifareUltralight.PAGE_SIZE;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -28,15 +26,8 @@ public class MainViewModel extends ViewModel {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private int currentPage = 1;
-    private int itemsPerPage = 10;
-    private boolean isLoading = false;
-
-    @Inject
-    public MainViewModel(ApiRepository apiRepository, UserDao userDao){
-        this.apiRepository = apiRepository;
-        this.userDao = userDao;
-        apiRepository.syncDataWithBackend();
-    }
+    private final int itemsPerPage = 10;
+    private boolean databaseIsEmpty = true;
 
     private final MutableLiveData<List<User>> _users = new MutableLiveData<>();
     public LiveData<List<User>> getUsers() {
@@ -48,10 +39,19 @@ public class MainViewModel extends ViewModel {
         return _filterEmail;
     }
 
+    public void setFilterEmail(String filterEmail) {
+        _filterEmail.postValue(filterEmail);
+    }
+
+    @Inject
+    public MainViewModel(ApiRepository apiRepository, UserDao userDao) {
+        this.apiRepository = apiRepository;
+        this.userDao = userDao;
+        apiRepository.syncDataWithBackend();
+    }
     public void getUsersFromRepository(){
-        isLoading = true ;
         compositeDisposable.add(
-                apiRepository.getUsers(currentPage, 10, "male")
+                apiRepository.getUsers(currentPage, itemsPerPage, "")
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 userResponse -> {
@@ -66,7 +66,6 @@ public class MainViewModel extends ViewModel {
                                 }
                         )
         );
-        isLoading = false;
     }
     public void getUsersFromDatabase() {
         compositeDisposable.add(
@@ -74,13 +73,35 @@ public class MainViewModel extends ViewModel {
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 users -> {
-                                    List<User> currentUsers = _users.getValue();
-                                    if (currentUsers == null) {
-                                        currentUsers = new ArrayList<>();
+                                    if (users.isEmpty()) {
+                                        getUsersFromRepository();
+                                        databaseIsEmpty = true;
+                                    } else {
+                                        List<User> currentUsers = _users.getValue();
+                                        if (currentUsers == null) {
+                                            currentUsers = new ArrayList<>();
+                                        }
+                                        databaseIsEmpty = false;
+                                        currentUsers.addAll(users);
+
+                                        _users.postValue(currentUsers);
                                     }
-                                    currentUsers.addAll(users);
-                                    _users.postValue(currentUsers);
+
                                 },
+                                throwable -> {
+                                    // Aquí puedes manejar el error
+                                }
+                        )
+        );
+    }
+
+    public void getUsersStartingWith(String prefix) {
+        currentPage = 1;
+        compositeDisposable.add(
+                userDao.getUsersStartingWith(prefix)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                _users::postValue,
                                 throwable -> {
                                     // Aquí puedes manejar el error
                                 }
@@ -92,10 +113,13 @@ public class MainViewModel extends ViewModel {
         int maxPages = 10;
         if (currentPage <= maxPages) {
             currentPage++;
-            getUsersFromDatabase();
+            if (databaseIsEmpty) {
+                getUsersFromRepository();
+            } else {
+                getUsersFromDatabase();
+            }
         }
     }
-
 
     @Override
     protected void onCleared() {
@@ -103,6 +127,5 @@ public class MainViewModel extends ViewModel {
         compositeDisposable.clear();
         apiRepository.dispose();
     }
-
 
 }

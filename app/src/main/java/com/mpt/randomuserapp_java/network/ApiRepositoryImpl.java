@@ -72,6 +72,7 @@ public class ApiRepositoryImpl implements ApiRepository {
                                 // Agrega los nuevos usuarios del backend
                                 for (User user : usersFromBackend) {
                                     if (!usersFromDatabase.contains(user)) {
+                                        user.setCompleteName(user.getName().getFirst() + " " + user.getName().getLast());
                                         userDao.insertUser(user);
                                     }
                                 }
@@ -80,10 +81,9 @@ public class ApiRepositoryImpl implements ApiRepository {
                 })
                 .subscribe(
                         users -> {
-                            // Los datos se han sincronizado correctamente
+
                         },
                         throwable -> {
-                            // Maneja el error
                             System.out.println("Error al sincronizar los datos: " + throwable.getMessage());
                         }
                 );
