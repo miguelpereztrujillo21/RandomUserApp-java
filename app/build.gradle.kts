@@ -78,6 +78,8 @@ dependencies {
     annotationProcessor(libs.roomCompiler)
     //Paging
     implementation(libs.paging)
+    //Swipe Refresh Layout
+    implementation(libs.swipeRefreshLayout)
 }
 
 

@@ -49,6 +49,20 @@ public class MainViewModel extends ViewModel {
         this.userDao = userDao;
         apiRepository.syncDataWithBackend();
     }
+
+    public void syncData(){
+        // Después de sincronizar los datos, obtén los usuarios de la base de datos
+        compositeDisposable.add(
+                apiRepository.syncDataWithBackend()
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                this::getUsersFromDatabase,
+                                throwable -> {
+                                    // Aquí puedes manejar el error
+                                }
+                        )
+        );
+    }
     public void getUsersFromRepository(){
         compositeDisposable.add(
                 apiRepository.getUsers(currentPage, itemsPerPage, "")

@@ -10,9 +10,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -55,14 +57,14 @@ public class ApiRepositoryImpl implements ApiRepository {
     }
 
     @Override
-    public void syncDataWithBackend() {
-        Disposable disposable = getUsers(1, 100, "")
+    public @NonNull Completable syncDataWithBackend() {
+        return getUsers(1, 100, "")
                 .subscribeOn(Schedulers.io())
-                .flatMap(userResponse -> {
+                .flatMapCompletable(userResponse -> {
                     List<User> usersFromBackend = userResponse.getResults();
                     return userDao.getAll()
                             .subscribeOn(Schedulers.io())
-                            .map(usersFromDatabase -> {
+                            .doOnSuccess(usersFromDatabase -> {
                                 // Elimina los usuarios que ya no están en el backend
                                 for (User user : usersFromDatabase) {
                                     if (!usersFromBackend.contains(user)) {
@@ -76,18 +78,8 @@ public class ApiRepositoryImpl implements ApiRepository {
                                         userDao.insertUser(user);
                                     }
                                 }
-                                return usersFromDatabase;
-                            });
-                })
-                .subscribe(
-                        users -> {
-
-                        },
-                        throwable -> {
-                            System.out.println("Error al sincronizar los datos: " + throwable.getMessage());
-                        }
-                );
-        compositeDisposable.add(disposable);
+                            }).ignoreElement();
+                });
     }
 
     @Override

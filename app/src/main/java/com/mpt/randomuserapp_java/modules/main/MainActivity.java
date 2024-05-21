@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
                 // Do nothing
             }
         });
+        binding.swipeMain.setOnRefreshListener(() -> {
+            viewModel.syncData();
+            binding.swipeMain.setRefreshing(false);
+        });
     }
 
     private void setUpAdapter() {
