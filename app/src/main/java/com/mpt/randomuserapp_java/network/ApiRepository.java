@@ -7,4 +7,7 @@ import retrofit2.Call;
 
 public interface ApiRepository {
     Single<UserResponse> getUsers(Integer page, Integer results, String gender);
+    void syncDataWithBackend();
+
+    void dispose();
 }

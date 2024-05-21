@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.glide)
     //Room
     implementation(libs.room)
+    implementation(libs.roomRxjava)
     annotationProcessor(libs.roomCompiler)
 }
 

@@ -4,6 +4,7 @@ import com.mpt.randomuserapp_java.BuildConfig;
 import com.mpt.randomuserapp_java.network.ApiRepository;
 import com.mpt.randomuserapp_java.network.ApiRepositoryImpl;
 import com.mpt.randomuserapp_java.network.ApiService;
+import com.mpt.randomuserapp_java.room.UserDao;
 
 import javax.inject.Singleton;
 
@@ -35,7 +36,7 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public ApiRepository provideApiRepository(ApiService api) {
-        return new ApiRepositoryImpl(api);
+    public ApiRepository provideApiRepository(ApiService api, UserDao userDao) {
+        return new ApiRepositoryImpl(api, userDao);
     }
 }

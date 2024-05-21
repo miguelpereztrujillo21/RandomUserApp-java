@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.mpt.randomuserapp_java.models.User;
 import com.mpt.randomuserapp_java.network.ApiRepository;
+import com.mpt.randomuserapp_java.room.UserDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class MainViewModel extends ViewModel {
 
     private final ApiRepository apiRepository;
+    private final UserDao userDao;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private int currentPage = 1;
@@ -28,8 +30,10 @@ public class MainViewModel extends ViewModel {
     private boolean isLoading = false;
 
     @Inject
-    public MainViewModel(ApiRepository apiRepository) {
+    public MainViewModel(ApiRepository apiRepository, UserDao userDao){
         this.apiRepository = apiRepository;
+        this.userDao = userDao;
+        apiRepository.syncDataWithBackend();
     }
 
     private final MutableLiveData<List<User>> _users = new MutableLiveData<>();
@@ -62,6 +66,19 @@ public class MainViewModel extends ViewModel {
         );
         isLoading = false;
     }
+    public void getUsersFromDatabase() {
+        compositeDisposable.add(
+                userDao.getAll()
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                _users::postValue,
+                                throwable -> {
+                                    // Handle the error
+                                    System.out.println("Error getting users from the database: " + throwable.getMessage());
+                                }
+                        )
+        );
+    }
 
     public void loadNextPage() {
         int maxPages = 10;
@@ -71,14 +88,12 @@ public class MainViewModel extends ViewModel {
         }
     }
 
-    public void  getUserfromDatabase(){
-
-    };
 
     @Override
     protected void onCleared() {
         super.onCleared();
         compositeDisposable.clear();
+        apiRepository.dispose();
     }
 
 

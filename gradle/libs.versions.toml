@@ -28,6 +28,7 @@ rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjav
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 roomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+roomRxjava = { group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp"}

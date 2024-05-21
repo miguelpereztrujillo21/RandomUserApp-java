@@ -2,20 +2,31 @@ package com.mpt.randomuserapp_java.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mpt.randomuserapp_java.models.User;
 import com.mpt.randomuserapp_java.models.UserResponse;
+import com.mpt.randomuserapp_java.room.UserDao;
+
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Response;
 
 @Singleton
 public class ApiRepositoryImpl implements ApiRepository {
     private final ApiService api;
+    private UserDao userDao;
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Inject
-    public ApiRepositoryImpl(ApiService api) {
+    public ApiRepositoryImpl(ApiService api, UserDao userDao) {
         this.api = api;
+        this.userDao = userDao;
     }
 
     @Override
@@ -41,5 +52,46 @@ public class ApiRepositoryImpl implements ApiRepository {
                 throw new Exception("Error al ejecutar la solicitud: " + e.getMessage());
             }
         });
+    }
+
+    @Override
+    public void syncDataWithBackend() {
+        Disposable disposable = getUsers(1, 100, "")
+                .subscribeOn(Schedulers.io())
+                .flatMap(userResponse -> {
+                    List<User> usersFromBackend = userResponse.getResults();
+                    return userDao.getAll()
+                            .subscribeOn(Schedulers.io())
+                            .map(usersFromDatabase -> {
+                                // Elimina los usuarios que ya no están en el backend
+                                for (User user : usersFromDatabase) {
+                                    if (!usersFromBackend.contains(user)) {
+                                        userDao.delete(user);
+                                    }
+                                }
+                                // Agrega los nuevos usuarios del backend
+                                for (User user : usersFromBackend) {
+                                    if (!usersFromDatabase.contains(user)) {
+                                        userDao.insertUser(user);
+                                    }
+                                }
+                                return usersFromDatabase;
+                            });
+                })
+                .subscribe(
+                        users -> {
+                            // Los datos se han sincronizado correctamente
+                        },
+                        throwable -> {
+                            // Maneja el error
+                            System.out.println("Error al sincronizar los datos: " + throwable.getMessage());
+                        }
+                );
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void dispose() {
+        compositeDisposable.dispose();
     }
 }

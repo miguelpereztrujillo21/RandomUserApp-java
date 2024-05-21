@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
        setContentView(binding.getRoot());
        setUpAdapter();
        initObservers();
-       viewModel.getUsersFromRepository();
+       viewModel.getUsersFromDatabase();
     }
 
     private void initObservers() {
