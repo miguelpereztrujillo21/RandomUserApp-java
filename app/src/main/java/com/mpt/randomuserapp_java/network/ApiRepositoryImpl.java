@@ -22,7 +22,7 @@ public class ApiRepositoryImpl implements ApiRepository {
     public Single<UserResponse> getUsers(Integer page, Integer results, String gender) {
         return Single.fromCallable(() -> {
             try {
-                Call<UserResponse> call = api.getUsers(page, results, gender, "97fd9fbb6274389e");
+                Call<UserResponse> call = api.getUsers(page, results, gender, "ac3536fef6ef5ad9");
                 Response<UserResponse> response = call.execute();
                 if (response.isSuccessful()) {
                     UserResponse userResponse = response.body();

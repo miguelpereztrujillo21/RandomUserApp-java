@@ -8,12 +8,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpt.randomuserapp_java.adapters.UserAdapter;
 import com.mpt.randomuserapp_java.databinding.ActivityMainBinding;
 import com.mpt.randomuserapp_java.models.User;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.annotations.NonNull;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
        setUpAdapter();
        initObservers();
        viewModel.getUsersFromRepository();
-
     }
 
     private void initObservers() {
@@ -45,8 +47,24 @@ public class MainActivity extends AppCompatActivity {
             // Handle click event
         });
         binding.recyclerMain.setAdapter(adapter);
+        setUpRecyclerView();
     }
-
+    private void setUpRecyclerView() {
+        binding.recyclerMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null) {
+                    int totalItemCount = layoutManager.getItemCount();
+                    int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
+                    if (dy > 0 && totalItemCount >= lastVisible - 5) {
+                        viewModel.loadnextPage();
+                    }
+                }
+            }
+        });
+    }
 
 
 }
