@@ -1,7 +1,6 @@
 package com.mpt.randomuserapp_java.network;
 
-import com.mpt.randomuserapp.models.UserResponse;
-
+import com.mpt.randomuserapp_java.models.UserResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

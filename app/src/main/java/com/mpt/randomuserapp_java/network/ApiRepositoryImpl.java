@@ -2,7 +2,7 @@ package com.mpt.randomuserapp_java.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.mpt.randomuserapp.models.UserResponse;
+import com.mpt.randomuserapp_java.models.UserResponse;
 
 import javax.inject.Inject;
 
