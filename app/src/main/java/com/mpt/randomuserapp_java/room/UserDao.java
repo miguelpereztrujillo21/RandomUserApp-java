@@ -1,5 +1,6 @@
 package com.mpt.randomuserapp_java.room;
 
+import androidx.paging.PagingSource;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -17,6 +18,9 @@ public interface UserDao {
 
     @Query("SELECT * FROM user")
     Single<List<User>> getAll();
+
+    @Query("SELECT * FROM user LIMIT :limit OFFSET :offset")
+    Single<List<User>> getUsersPagin(int limit, int offset);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUser(User user);

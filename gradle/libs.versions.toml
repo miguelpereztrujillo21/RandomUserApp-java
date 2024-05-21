@@ -12,6 +12,7 @@ dagger = "2.48"
 rxjava = "3.0.12"
 glide = "4.16.0"
 room = "2.6.1"
+paging = "3.3.0"
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -29,6 +30,7 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 roomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 roomRxjava = { group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
+paging = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp"}

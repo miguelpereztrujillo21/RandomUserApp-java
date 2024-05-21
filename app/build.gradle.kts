@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.room)
     implementation(libs.roomRxjava)
     annotationProcessor(libs.roomCompiler)
+    //Paging
+    implementation(libs.paging)
 }
 
 

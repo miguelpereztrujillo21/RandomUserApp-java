@@ -1,5 +1,7 @@
 package com.mpt.randomuserapp_java.modules.main;
 
+import static android.nfc.tech.MifareUltralight.PAGE_SIZE;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -26,7 +28,7 @@ public class MainViewModel extends ViewModel {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private int currentPage = 1;
-
+    private int itemsPerPage = 10;
     private boolean isLoading = false;
 
     @Inject
@@ -68,13 +70,19 @@ public class MainViewModel extends ViewModel {
     }
     public void getUsersFromDatabase() {
         compositeDisposable.add(
-                userDao.getAll()
+                userDao.getUsersPagin(itemsPerPage, currentPage * itemsPerPage)
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                _users::postValue,
+                                users -> {
+                                    List<User> currentUsers = _users.getValue();
+                                    if (currentUsers == null) {
+                                        currentUsers = new ArrayList<>();
+                                    }
+                                    currentUsers.addAll(users);
+                                    _users.postValue(currentUsers);
+                                },
                                 throwable -> {
-                                    // Handle the error
-                                    System.out.println("Error getting users from the database: " + throwable.getMessage());
+                                    // Aquí puedes manejar el error
                                 }
                         )
         );
@@ -84,7 +92,7 @@ public class MainViewModel extends ViewModel {
         int maxPages = 10;
         if (currentPage <= maxPages) {
             currentPage++;
-            getUsersFromRepository();
+            getUsersFromDatabase();
         }
     }
 
