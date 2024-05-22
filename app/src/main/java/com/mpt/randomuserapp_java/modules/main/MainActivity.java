@@ -3,6 +3,7 @@ package com.mpt.randomuserapp_java.modules.main;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.CompoundButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                 adapter.submitList(users));
 
         viewModel.getFilterEmail().observe(this, viewModel::getUsersStartingWith);
+        viewModel.getFilterGender().observe(this, gender -> {
+
+        });
     }
 
     private void initListeners() {
@@ -103,8 +107,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initChip(Chip chip, String filter) {
-        chip.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.onChipCheckedChanged(isChecked, filter));
+        chip.setOnClickListener(v -> {
+            Chip chip1 = (Chip) v;
 
+                viewModel.onChipCheckedChanged(chip1.isChecked(), filter);
+
+        });
     }
 
 }

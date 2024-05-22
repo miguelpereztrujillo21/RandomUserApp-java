@@ -40,7 +40,11 @@ public class MainViewModel extends ViewModel {
         return _filterEmail;
     }
 
-    private String filterGender = "";
+
+    private MutableLiveData<String> _filterGender = new MutableLiveData<>();
+    public LiveData<String> getFilterGender() {
+        return _filterGender;
+    }
 
     public void setFilterEmail(String filterEmail) {
         _filterEmail.postValue(filterEmail);
@@ -54,6 +58,9 @@ public class MainViewModel extends ViewModel {
     }
 
     public void syncData(){
+        _filterGender.setValue("");
+        _filterEmail.setValue("");
+        _users.setValue(new ArrayList<>());
         compositeDisposable.add(
                 apiRepository.syncDataWithBackend()
                         .subscribeOn(Schedulers.io())
@@ -67,7 +74,7 @@ public class MainViewModel extends ViewModel {
     }
     public void getUsersFromRepository(){
         compositeDisposable.add(
-                apiRepository.getUsers(currentPage, itemsPerPage, filterGender)
+                apiRepository.getUsers(currentPage, itemsPerPage, _filterGender.getValue())
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 userResponse -> {
@@ -128,7 +135,7 @@ public class MainViewModel extends ViewModel {
     public void getUsersByGender() {
         currentPage = 1;
         compositeDisposable.add(
-                userDao.getUsersByGender(filterGender)
+                userDao.getUsersByGender(_filterGender.getValue())
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 _users::postValue,
@@ -150,19 +157,18 @@ public class MainViewModel extends ViewModel {
             }
         }
     }
-
     public void onChipCheckedChanged(boolean isChecked, String filter) {
         String newFilterValue = isChecked ? filter : "";
-        if(!Objects.equals(filterGender, newFilterValue)) {
-            filterGender = newFilterValue;
-            getUsersByGender();
-        }
-        if (newFilterValue.isEmpty()) {
-            _users.setValue(new ArrayList<>());
-            getUsersFromDatabase();
+        if (!Objects.equals(_filterGender.getValue(), newFilterValue)) {
+            _filterGender.setValue(newFilterValue);
+            if (isChecked) {
+                getUsersByGender();
+            } else {
+                _users.setValue(new ArrayList<>());
+                getUsersFromDatabase();
+            }
         }
     }
-
 
     @Override
     protected void onCleared() {
