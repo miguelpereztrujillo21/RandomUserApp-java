@@ -167,6 +167,7 @@ public class MainViewModel extends ViewModel {
                 _users.setValue(new ArrayList<>());
                 getUsersFromDatabase();
             }
+            currentPage = 1;
         }
     }
 
