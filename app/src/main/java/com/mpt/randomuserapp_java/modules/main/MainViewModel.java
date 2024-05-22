@@ -60,6 +60,7 @@ public class MainViewModel extends ViewModel {
     public void syncData(){
         _filterGender.setValue("");
         _filterEmail.setValue("");
+        currentPage = 1;
         _users.setValue(new ArrayList<>());
         compositeDisposable.add(
                 apiRepository.syncDataWithBackend()
@@ -120,16 +121,18 @@ public class MainViewModel extends ViewModel {
 
     public void getUsersStartingWith(String prefix) {
         currentPage = 1;
-        compositeDisposable.add(
-                userDao.getUsersStartingWith(prefix)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(
-                                _users::postValue,
-                                throwable -> {
-                                    // Aquí puedes manejar el error
-                                }
-                        )
-        );
+        if (!prefix.isEmpty()) {
+            compositeDisposable.add(
+                    userDao.getUsersStartingWith(prefix)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(
+                                    _users::postValue,
+                                    throwable -> {
+
+                                    }
+                            )
+            );
+        }
     }
 
     public void getUsersByGender() {

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
          initComponents();
        initObservers();
        initListeners();
-       viewModel.getUsersFromDatabase();
+       viewModel.syncData();
     }
 
     private void initComponents() {
@@ -45,12 +45,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initObservers() {
-        viewModel.getUsers().observe(this, users ->
-                adapter.submitList(users));
-
+        viewModel.getUsers().observe(this, users ->{
+            adapter.submitList(users);
+            adapter.notifyDataSetChanged();
+        });
         viewModel.getFilterEmail().observe(this, viewModel::getUsersStartingWith);
         viewModel.getFilterGender().observe(this, gender -> {
-
+            if(gender.isEmpty()) {
+                binding.layoutFilters.chipGenderMaleMain.setChecked(false);
+                binding.layoutFilters.chipGenderFemaleMain.setChecked(false);
+            }
         });
     }
 
